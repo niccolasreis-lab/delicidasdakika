@@ -1,0 +1,26 @@
+[
+  {
+    "frameWidth": 320,
+    "navVisible": true,
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "frameWidth": 390,
+    "navVisible": true,
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "frameWidth": 768,
+    "navVisible": false,
+    "scrollWidth": 753,
+    "width": 753
+  },
+  {
+    "frameWidth": 1280,
+    "navVisible": false,
+    "scrollWidth": 1265,
+    "width": 1265
+  }
+]

@@ -1,0 +1,22 @@
+✔ retirada: 2 marmitas G com ovo = R$60,80 (1.663912ms)
+✔ entrega zona 1: R$68,80 (0.126836ms)
+✔ entrega zona 0: R$65,80 (0.101209ms)
+✔ preço do cliente é ignorado (0.104994ms)
+✔ bebida não recebe acréscimo de tamanho (0.592589ms)
+✔ carrinho vazio rejeitado (0.237628ms)
+✔ quantidade negativa rejeitada (0.516127ms)
+✔ quantidade acima do limite rejeitada (0.395981ms)
+✔ tamanho inválido rejeitado (0.266071ms)
+✔ acompanhamento inválido rejeitado (0.400858ms)
+✔ adicional duplicado rejeitado (0.302113ms)
+✔ produto desconhecido rejeitado (0.100698ms)
+✔ região inválida rejeitada (0.14312ms)
+✔ modalidade inválida rejeitada (0.170601ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 200.67947

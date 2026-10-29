@@ -1,0 +1,42 @@
+[
+  {
+    "name": "busca sem resultado",
+    "passed": true
+  },
+  {
+    "name": "limpar busca",
+    "passed": true
+  },
+  {
+    "name": "filtro de categoria",
+    "passed": true
+  },
+  {
+    "name": "tamanho, acompanhamento, adicional e quantidade",
+    "passed": true
+  },
+  {
+    "name": "aumentar quantidade recalcula total com frete",
+    "passed": true
+  },
+  {
+    "name": "diminuir quantidade recalcula total com frete",
+    "passed": true
+  },
+  {
+    "name": "fechar e reabrir checkout preserva preenchimento",
+    "passed": true
+  },
+  {
+    "name": "confirmação do pedido local na interface",
+    "passed": true
+  },
+  {
+    "name": "histórico abre e permite consultar pedido local",
+    "passed": true
+  },
+  {
+    "name": "remover último item esvazia carrinho",
+    "passed": true
+  }
+]

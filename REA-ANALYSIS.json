@@ -1,0 +1,13 @@
+{
+  "tool": "REA 6.8.0",
+  "date": "2026-10-29",
+  "target": "https://instadelivery.com.br/marmitexcaseiradavanu",
+  "mode": "static analysis of downloaded public scripts",
+  "files": 37,
+  "evidence_id": "ev_044b2fa68198af49ec9a5756a74a32cd62b74059ff2c712476c540f52c4ca424",
+  "subject_sha256": "dd769ca5462bda820a2c8ce1717d76271db80eb21e278ee988082c1ca652aff5",
+  "status": "partial",
+  "error_code": "capability_unavailable",
+  "reason": "procps ps failed: fatal library error, lookup self",
+  "coverage": "Artifact inventory only. Semantic routes and runtime behavior unverified."
+}

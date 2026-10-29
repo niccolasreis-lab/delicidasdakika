@@ -1,0 +1,41 @@
+{
+  "origin": "http://terminal.local:4173",
+  "tests": [
+    {
+      "name": "registro local com preço recalculado",
+      "passed": true
+    },
+    {
+      "name": "retentativa idempotente retorna mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "mesma chave com payload diferente rejeitada",
+      "passed": true
+    },
+    {
+      "name": "consulta autenticada do pedido local",
+      "passed": true
+    },
+    {
+      "name": "consulta com token errado negada",
+      "passed": true
+    },
+    {
+      "name": "endereço incompleto rejeitado",
+      "passed": true
+    },
+    {
+      "name": "quantidade inválida rejeitada",
+      "passed": true
+    },
+    {
+      "name": "gestão sem chave negada",
+      "passed": true
+    },
+    {
+      "name": "alteração administrativa sem chave negada",
+      "passed": true
+    }
+  ]
+}

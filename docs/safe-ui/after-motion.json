@@ -1,0 +1,18 @@
+[
+  {
+    "name": "padrão Suaves selecionado",
+    "passed": true
+  },
+  {
+    "name": "Desativadas remove animação do modal",
+    "passed": true
+  },
+  {
+    "name": "Completas aplica modo ao documento",
+    "passed": true
+  },
+  {
+    "name": "preferência mantida após recarregar",
+    "passed": true
+  }
+]

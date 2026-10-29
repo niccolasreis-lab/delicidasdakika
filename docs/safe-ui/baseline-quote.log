@@ -1,0 +1,14 @@
+PASS retirada: 2 marmitas G com ovo = R$60,80
+PASS entrega zona 1: R$68,80
+PASS entrega zona 0: R$65,80
+PASS preço do cliente é ignorado
+PASS bebida não recebe acréscimo de tamanho
+PASS carrinho vazio rejeitado
+PASS quantidade negativa rejeitada
+PASS quantidade acima do limite rejeitada
+PASS tamanho inválido rejeitado
+PASS acompanhamento inválido rejeitado
+PASS adicional duplicado rejeitado
+PASS produto desconhecido rejeitado
+PASS região inválida rejeitada
+PASS modalidade inválida rejeitada
