@@ -51,4 +51,23 @@ A configuração Vercel está isolada nesta branch. A branch de design mantém o
 - https://orm.drizzle.team/docs/get-started/turso-existing
 - https://github.com/tursodatabase/libsql-client-ts
 
-Esta proposta não comprova que o banco novo está provisionado ou a integração foi validada. Essas ações permanecem pendentes de autorização e execução.
+## Continuação autorizada em 29/10/2026
+
+O proprietário autorizou a adaptação proposta para um banco Turso/libSQL novo e isolado. Não é necessário solicitar novamente essa autorização.
+
+Verificações atuais:
+
+- Projeto confirmado: `delicias-da-kika`, equipe `nicolas-reis-projects-04950746`, Next.js, Node.js 24.x.
+- O projeto ainda não tem variáveis de ambiente nem deployment publicado.
+- A instalação Turso Cloud (`tursocloud/database`) não está presente na equipe.
+- O plano Starter consultado pela API é gratuito, sem cartão obrigatório. Nenhum plano pago foi contratado.
+- O Vercel CLI 65.7.0 foi instalado sob demanda e informou ausência de credenciais, iniciando autenticação por dispositivo. Nenhum segredo foi recuperado, exibido ou incluído no repositório.
+- Os arquivos de vínculo e estado local da Vercel foram adicionados ao `.gitignore`.
+
+### Próxima dependência externa
+
+O proprietário precisa concluir a autenticação do terminal na conta Vercel correta. A primeira instalação da integração também pode exigir aceitação pessoal dos termos do Marketplace. O CLI exibirá esse passo quando autenticado. Não aceitar termos pelo proprietário nem solicitar tokens pelo chat.
+
+Depois da autenticação, confirmar novamente o projeto vinculado, instalar `tursocloud/database` no plano `starter`, nome `delicias-da-kika`, região `iad1` (padrão das Functions), e continuar o plano de adaptação acima. Não iniciar migrações antes de confirmar que a URL recebida corresponde ao banco novo. A API conectada de gerenciamento da Vercel não oferece a operação de instalação desse recurso.
+
+A autorização de banco está registrada, mas nenhum banco foi criado e nenhum código de persistência foi alterado nesta continuação. O build Vercel permanece bloqueado até o provisionamento e a adaptação reais. Pix/Cakto e webhooks continuam pendentes de implementação e não devem ser anunciados como ativos.
