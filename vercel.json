@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "node scripts/db/ensure-turso.mjs --initialize-empty-kika && pnpm run build:vercel",
+  "buildCommand": "node scripts/db/ensure-turso.mjs --initialize-empty-kika --initialize-admin && pnpm run build:vercel",
   "installCommand": "pnpm install --frozen-lockfile"
 }
