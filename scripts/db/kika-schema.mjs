@@ -21,7 +21,7 @@ export async function ensureKikaSchema(client, {initializeEmpty = false} = {}) {
   try {
     const tables = await tx.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'");
     const names = tables.rows.map(row => row.name);
-    if (names.some(name => name !== 'orders' && name !== '__drizzle_migrations')) {
+    if (names.some(name => !['orders','__drizzle_migrations','kika_user','kika_session','kika_account','kika_verification','kika_rate_limit','kika_catalog','kika_media'].includes(name))) {
       throw new Error('Banco contém tabelas fora do escopo da Kika; nenhuma alteração realizada.');
     }
     let initialized = false;

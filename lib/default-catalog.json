@@ -1,0 +1,335 @@
+{
+  "menu": [
+    {
+      "id": "frango",
+      "name": "Frango grelhado da Kika",
+      "description": "Filé de frango douradinho, arroz soltinho, feijão caseiro e seu acompanhamento favorito.",
+      "price": 1890,
+      "category": "Marmitas",
+      "icon": "🍗",
+      "color": "#e8b66b",
+      "tag": "Queridinho da casa",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/frango.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "strogonoff",
+      "name": "Strogonoff de frango",
+      "description": "Cremoso na medida, com arroz branco e batata palha crocante.",
+      "price": 2190,
+      "category": "Prato do dia",
+      "icon": "🥘",
+      "color": "#d68747",
+      "tag": "Prato do dia",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/strogonoff.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "calabresa",
+      "name": "Calabresa acebolada",
+      "description": "Calabresa na chapa com cebola dourada, arroz e feijão feito com carinho.",
+      "price": 1790,
+      "category": "Marmitas",
+      "icon": "🍲",
+      "color": "#b9603f",
+      "tag": "",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/calabresa.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "parmegiana",
+      "name": "Frango à parmegiana",
+      "description": "Frango empanado, molho de tomate caseiro e queijo derretido. Acompanha arroz e fritas.",
+      "price": 2490,
+      "category": "Marmitas",
+      "icon": "🍛",
+      "color": "#c96b38",
+      "tag": "Especial da Kika",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/parmegiana.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "vegetariana",
+      "name": "Marmita da horta",
+      "description": "Legumes da estação, arroz, feijão e uma generosa porção de sabor.",
+      "price": 1790,
+      "category": "Marmitas",
+      "icon": "🥦",
+      "color": "#88a65c",
+      "tag": "Sem carne",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/vegetariana.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "mini",
+      "name": "Mini marmita de frango",
+      "description": "Uma porção menor do nosso frango com arroz, feijão e acompanhamento.",
+      "price": 1290,
+      "category": "Marmitas",
+      "icon": "🍱",
+      "color": "#d8a15c",
+      "tag": "Porção menor",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/mini.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "ovo",
+      "name": "Ovo frito",
+      "description": "Mais um carinho na sua marmita. Conte nas observações como prefere.",
+      "price": 350,
+      "category": "Extras",
+      "icon": "🍳",
+      "color": "#e9c36b",
+      "tag": "",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/ovo.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "fritas",
+      "name": "Porção de fritas",
+      "description": "Douradinhas por fora e macias por dentro.",
+      "price": 890,
+      "category": "Extras",
+      "icon": "🍟",
+      "color": "#edc568",
+      "tag": "",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/fritas.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "coca",
+      "name": "Coca-Cola 350 ml",
+      "description": "Lata de 350 ml para acompanhar seu almoço.",
+      "price": 650,
+      "category": "Bebidas",
+      "icon": "🥤",
+      "color": "#bc4d3c",
+      "tag": "",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/coca.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    },
+    {
+      "id": "guarana",
+      "name": "Guaraná Antarctica 350 ml",
+      "description": "Lata de 350 ml, bem geladinha.",
+      "price": 600,
+      "category": "Bebidas",
+      "icon": "🥤",
+      "color": "#6d9b58",
+      "tag": "",
+      "active": true,
+      "mediumExtra": 400,
+      "largeExtra": 800,
+      "image": "/images/guarana.webp",
+      "photoLabel": "Foto ilustrativa",
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "dates": {}
+    }
+  ],
+  "extras": [
+    {
+      "id": "ovo",
+      "name": "Ovo frito",
+      "price": 350
+    },
+    {
+      "id": "carne",
+      "name": "Frango extra",
+      "price": 600
+    }
+  ],
+  "zones": [
+    {
+      "name": "Zona de exemplo • até 2 km",
+      "fee": 500
+    },
+    {
+      "name": "Zona de exemplo • 2 a 4 km",
+      "fee": 800
+    }
+  ],
+  "store": {
+    "paused": false,
+    "weekly": [
+      {
+        "open": true,
+        "start": "00:00",
+        "end": "23:59",
+        "delivery": true,
+        "pickup": true
+      },
+      {
+        "open": true,
+        "start": "00:00",
+        "end": "23:59",
+        "delivery": true,
+        "pickup": true
+      },
+      {
+        "open": true,
+        "start": "00:00",
+        "end": "23:59",
+        "delivery": true,
+        "pickup": true
+      },
+      {
+        "open": true,
+        "start": "00:00",
+        "end": "23:59",
+        "delivery": true,
+        "pickup": true
+      },
+      {
+        "open": true,
+        "start": "00:00",
+        "end": "23:59",
+        "delivery": true,
+        "pickup": true
+      },
+      {
+        "open": true,
+        "start": "00:00",
+        "end": "23:59",
+        "delivery": true,
+        "pickup": true
+      },
+      {
+        "open": true,
+        "start": "00:00",
+        "end": "23:59",
+        "delivery": true,
+        "pickup": true
+      }
+    ],
+    "exceptions": {},
+    "notice": "Cardápio de demonstração",
+    "address": "A cadastrar",
+    "leadTime": "30–50 min",
+    "demo": true
+  }
+}

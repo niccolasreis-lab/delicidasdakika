@@ -1,6 +1,7 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "./schema";
+import * as adminSchema from './admin-schema';
 
 function createDb() {
   const url = process.env.TURSO_DATABASE_URL;
@@ -12,7 +13,7 @@ function createDb() {
     throw new Error("O banco de pedidos precisa de uma conexão remota segura.");
   }
 
-  return drizzle(createClient({ url, authToken }), { schema });
+  return drizzle(createClient({ url, authToken }), { schema: {...schema,...adminSchema} });
 }
 
 let db: ReturnType<typeof createDb> | undefined;
