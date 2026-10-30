@@ -1,5 +1,7 @@
 # Vercel — preparação de publicação
 
+> Histórico da preparação inicial. A autorização de adaptação já foi concedida e a integração Turso foi instalada posteriormente. O estado técnico atual, os testes e os limites estão em [VERCEL-VALIDATION.md](VERCEL-VALIDATION.md). As pendências abaixo descrevem o momento da preparação, não o estado atual.
+
 Data: 29/10/2026. Branch `deploy/vercel`.
 
 ## Concluído
