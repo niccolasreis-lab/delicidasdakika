@@ -1,5 +1,6 @@
 import {createClient} from '@libsql/client/web';
 import {ensureKikaSchema} from './kika-schema.mjs';
+import {isApprovedKikaHost} from './turso-target.mjs';
 
 // Only the new, explicitly approved Kika database may be initialized.
 // Never print the URL, token, environment, or raw provider errors.
@@ -12,7 +13,7 @@ try {
   stage = 'secure_protocol';
   if (!['libsql:', 'https:'].includes(url.protocol)) throw new Error('insecure_protocol');
   stage = 'approved_kika_destination';
-  if (!url.hostname.endsWith('.turso.io') || !url.hostname.startsWith('delicias-da-kika-')) throw new Error('unapproved_destination');
+  if (!isApprovedKikaHost(url.hostname)) throw new Error('unapproved_destination');
   stage = 'connection_and_schema';
   client = createClient({url: url.href, authToken: process.env.TURSO_AUTH_TOKEN});
   const result = await ensureKikaSchema(client, {

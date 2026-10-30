@@ -18,7 +18,7 @@ Branch isolada: `deploy/vercel`. O proprietário autorizou o commit, o deploy e 
 | `app/api/admin/route.ts` | Lê `process.env.ADMIN_TOKEN` em vez do binding Cloudflare. Verificação Bearer, contratos e estados preservados. |
 | `package.json`, `pnpm-lock.yaml` | Um SDK adicionado com versão exata; scripts para Next.js/Vercel e testes. Dependências anteriores mantidas. |
 | `scripts/db/kika-schema.mjs` | Verifica os 13 campos do SQL original. Inicializa somente banco vazio com opção explícita; recusa outras tabelas e schemas incompatíveis. Não executa ALTER, DROP, limpeza ou importação de dados. |
-| `scripts/db/ensure-turso.mjs` | Confirma destino Turso com nome `delicias-da-kika-*`, conexão e schema. Não exibe URL, token ou erros brutos do provedor. |
+| `scripts/db/ensure-turso.mjs`, `scripts/db/turso-target.mjs` | Confirmam destino no domínio Turso com uma das grafias da marca já usadas no projeto (`delicias-da-kika`, `deliciasdakika`, `delicidasdakika`), conexão e schema. Não exibem URL, token ou erros brutos do provedor. |
 | `vercel.json` | Verificação do banco seguida do build Next.js. A primeira execução pode criar somente a tabela original no banco novo vazio, conforme autorização. |
 | `tests/turso-schema.test.mjs` | Testes reais com libSQL em memória: inicialização, repetição segura, preservação de dados e recusa de bancos fora do escopo. |
 | `tests/vercel-local-api.mjs` | Servidor de produção Next.js, SQLite temporário descartável e chave administrativa fictícia. Nunca usa Vercel nem credenciais reais. |
@@ -31,6 +31,8 @@ Branch isolada: `deploy/vercel`. O proprietário autorizou o commit, o deploy e 
 - TypeScript `tsc --noEmit`: PASS.
 - Regressão monetária e entradas inválidas: 14/14 PASS.
 - Segurança da inicialização do schema: 3/3 PASS.
+- Guardas de configuração e sigilo dos logs: 4/4 PASS (variáveis ausentes, URL inválida, protocolo inseguro e destino fora do escopo; sem conexão externa).
+- Validação das três grafias da marca e recusa de destinos/prefixos indevidos: 1/1 PASS; 10 casos no teste, sem conexão externa.
 - Integração Next.js + libSQL: 11/11 cenários PASS (12 testes contados pelo Node, incluindo o contêiner).
 - Lint: 14 erros e 4 avisos preexistentes; nenhum apontamento novo. A troca do acesso ao token eliminou um `any` anterior. O baseline tinha 15 erros e 4 avisos.
 
