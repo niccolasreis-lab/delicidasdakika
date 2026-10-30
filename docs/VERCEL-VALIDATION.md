@@ -7,6 +7,7 @@ Branch isolada: `deploy/vercel`. O proprietário autorizou o commit, o deploy e 
 - Equipe Vercel: `nicolas-reis-projects-04950746`.
 - Projeto: `delicias-da-kika`, Next.js, Node.js 24.x.
 - Turso Cloud instalado no plano gratuito `starter`.
+- Recurso verificado por metadados autenticados da Vercel: `store_ZMvpHwXEd11DUyxM`, nome automático `database-bisque-cushion`, ID externo `01a18a7d-cd01-7479-b1a8-b1d3b8e180ca`, região `iad1`, status pronto, da equipe acima e conectado somente ao projeto Kika em Preview e Production. Os content hints das duas variáveis confirmam esse mesmo recurso. Não foram lidos seus segredos.
 - Nomes das variáveis confirmados, sem leitura dos valores: `TURSO_DATABASE_URL` e `TURSO_AUTH_TOKEN`, nos ambientes Preview e Production.
 - A presença das variáveis não comprova conexão. O build remoto verifica o acesso real antes de compilar e falha se o destino, acesso ou schema forem incompatíveis.
 
@@ -18,7 +19,7 @@ Branch isolada: `deploy/vercel`. O proprietário autorizou o commit, o deploy e 
 | `app/api/admin/route.ts` | Lê `process.env.ADMIN_TOKEN` em vez do binding Cloudflare. Verificação Bearer, contratos e estados preservados. |
 | `package.json`, `pnpm-lock.yaml` | Um SDK adicionado com versão exata; scripts para Next.js/Vercel e testes. Dependências anteriores mantidas. |
 | `scripts/db/kika-schema.mjs` | Verifica os 13 campos do SQL original. Inicializa somente banco vazio com opção explícita; recusa outras tabelas e schemas incompatíveis. Não executa ALTER, DROP, limpeza ou importação de dados. |
-| `scripts/db/ensure-turso.mjs`, `scripts/db/turso-target.mjs` | Confirmam destino no domínio Turso com uma das grafias da marca já usadas no projeto (`delicias-da-kika`, `deliciasdakika`, `delicidasdakika`), conexão e schema. Não exibem URL, token ou erros brutos do provedor. |
+| `scripts/db/ensure-turso.mjs`, `scripts/db/turso-target.mjs` | Restringem o destino ao nome/ID do recurso específico verificado acima, no domínio Turso com protocolo seguro; confirmam conexão e schema. Outros bancos, inclusive com nome da marca, são recusados. Não exibem URL, token ou erros brutos do provedor. |
 | `vercel.json` | Verificação do banco seguida do build Next.js. A primeira execução pode criar somente a tabela original no banco novo vazio, conforme autorização. |
 | `tests/turso-schema.test.mjs` | Testes reais com libSQL em memória: inicialização, repetição segura, preservação de dados e recusa de bancos fora do escopo. |
 | `tests/vercel-local-api.mjs` | Servidor de produção Next.js, SQLite temporário descartável e chave administrativa fictícia. Nunca usa Vercel nem credenciais reais. |
@@ -32,13 +33,15 @@ Branch isolada: `deploy/vercel`. O proprietário autorizou o commit, o deploy e 
 - Regressão monetária e entradas inválidas: 14/14 PASS.
 - Segurança da inicialização do schema: 3/3 PASS.
 - Guardas de configuração e sigilo dos logs: 4/4 PASS (variáveis ausentes, URL inválida, protocolo inseguro e destino fora do escopo; sem conexão externa).
-- Validação das três grafias da marca e recusa de destinos/prefixos indevidos: 1/1 PASS; 10 casos no teste, sem conexão externa.
+- Restrição ao nome/ID do recurso Kika verificado e recusa de outros bancos/domínios: 1/1 PASS; 10 casos no teste, sem conexão externa.
 - Integração Next.js + libSQL: 11/11 cenários PASS (12 testes contados pelo Node, incluindo o contêiner).
 - Lint: 14 erros e 4 avisos preexistentes; nenhum apontamento novo. A troca do acesso ao token eliminou um `any` anterior. O baseline tinha 15 erros e 4 avisos.
 
 Integração confirma: página e imagens de marca; total R$68,80 calculado pelo servidor; pagamento `não cobrado`; retentativa idempotente; conflito rejeitado; consulta privada por token; não exposição do token/hash na consulta pública; endereço e quantidade inválidos; gestão sem autorização negada; listagem e alteração de status com chave fictícia; persistência após reiniciar o servidor. Todos os registros são sintéticos e locais.
 
 O primeiro teste do verificador identificou uma expectativa incorreta de nulabilidade no próprio verificador. A expectativa foi corrigida para refletir o SQL original (status e payment NOT NULL); schema e SQL não foram modificados. Os 17 testes unitários passaram após essa correção.
+
+Os primeiros builds remotos pararam antes da conexão porque a guarda presumia o nome da marca no hostname. O recurso recebeu um nome automático da Vercel. Seu proprietário, criação, prontidão, ID e vínculo exclusivo ao projeto foram então confirmados por metadados. A revisão automática rejeitou uma proposta que aceitaria qualquer domínio Turso; essa proposta não foi enviada ao GitHub e foi revertida localmente. A alternativa mantém uma lista restrita ao nome/ID do recurso específico aprovado.
 
 ## Reproduzir
 

@@ -3,12 +3,12 @@ import test from 'node:test';
 import {spawnSync} from 'node:child_process';
 import {isApprovedKikaHost} from '../scripts/db/turso-target.mjs';
 
-test('approved destination accepts only the project brand spellings on Turso', () => {
-  for (const spelling of ['delicias-da-kika', 'deliciasdakika', 'delicidasdakika']) {
-    assert.equal(isApprovedKikaHost(`${spelling}-test.turso.io`), true);
-    assert.equal(isApprovedKikaHost(`${spelling}.turso.io`), true);
+test('approved destination is limited to the verified Kika resource name or ID', () => {
+  for (const stem of ['database-bisque-cushion', '01a18a7d-cd01-7479-b1a8-b1d3b8e180ca']) {
+    assert.equal(isApprovedKikaHost(`${stem}-test.turso.io`), true);
+    assert.equal(isApprovedKikaHost(`${stem}.turso.io`), true);
   }
-  for (const host of ['unrelated.turso.io', 'deliciasdakika-test.example.com', 'deliciasdakika-test.turso.io.example.com', 'deliciasdakikaother.turso.io']) {
+  for (const host of ['unrelated.turso.io', 'deliciasdakika-test.turso.io', 'database-bisque-cushion-test.example.com', 'database-bisque-cushion-test.turso.io.example.com', 'database-bisque-cushionother.turso.io', '01a18a7d-cd01-7479-b1a8-other.turso.io']) {
     assert.equal(isApprovedKikaHost(host), false);
   }
 });
