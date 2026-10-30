@@ -1,0 +1,127 @@
+{
+  "url": "https://delicias-da-kika.vercel.app",
+  "source_commit": "02a1061ac0c019be33698c4ed4befdc5c37adbf9",
+  "home_status": 200,
+  "brand_in_html": true,
+  "checks": [
+    {
+      "path": "/_next/static/chunks/3beece14-3e8591c9610c6de6.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/_next/static/chunks/470-44546eba0056d30e.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/_next/static/chunks/585-3ad71035b22a6008.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/_next/static/chunks/app/layout-7e80f93814fc2070.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/_next/static/chunks/app/page-199c3f2c4e6151a3.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/_next/static/chunks/main-app-4a549ffc15ce7235.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/_next/static/chunks/webpack-8dfc70969673782b.js",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/_next/static/css/35ed41c3d98ea9ca.css",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/brand/kika-cozinha.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/brand/kika-logo.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/calabresa.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/coca.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/frango.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/fritas.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/guarana.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/mini.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/ovo.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/parmegiana.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/strogonoff.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/images/vegetariana.webp",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/api/orders?id=00000000-0000-0000-0000-000000000000",
+      "status": 404,
+      "passed": true,
+      "expected_response": true
+    },
+    {
+      "path": "/api/admin",
+      "status": 401,
+      "passed": true,
+      "expected_response": true
+    }
+  ],
+  "all_passed": true,
+  "writes_performed": false
+}
