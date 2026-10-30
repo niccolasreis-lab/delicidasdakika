@@ -23,8 +23,9 @@ Branch isolada: `deploy/vercel`. O proprietário autorizou o commit, o deploy e 
 | `vercel.json` | Verificação do banco seguida do build Next.js. A primeira execução pode criar somente a tabela original no banco novo vazio, conforme autorização. |
 | `tests/turso-schema.test.mjs` | Testes reais com libSQL em memória: inicialização, repetição segura, preservação de dados e recusa de bancos fora do escopo. |
 | `tests/vercel-local-api.mjs` | Servidor de produção Next.js, SQLite temporário descartável e chave administrativa fictícia. Nunca usa Vercel nem credenciais reais. |
+| `app/layout.tsx`, `app/site.css`, `app/kika-theme.css` | Uma única entrada CSS mantém explicitamente a ordem base → tema no build nativo. A importação das fontes foi movida para o início dessa entrada. Tokens, seletores, handlers e componentes preservados. |
 
-`db/schema.ts`, o SQL existente, `lib/menu.ts`, a API de pedidos, preços, fretes, estados do frontend, identidade visual e assets não foram alterados. O D1 anterior não foi acessado nem migrado.
+`db/schema.ts`, o SQL existente, `lib/menu.ts`, a API de pedidos, preços, fretes, estados do frontend, identidade visual e assets foram preservados. O D1 anterior não foi acessado nem migrado.
 
 ## Validação local executada
 
@@ -42,6 +43,8 @@ Integração confirma: página e imagens de marca; total R$68,80 calculado pelo 
 O primeiro teste do verificador identificou uma expectativa incorreta de nulabilidade no próprio verificador. A expectativa foi corrigida para refletir o SQL original (status e payment NOT NULL); schema e SQL não foram modificados. Os 17 testes unitários passaram após essa correção.
 
 Os primeiros builds remotos pararam antes da conexão porque a guarda presumia o nome da marca no hostname. O recurso recebeu um nome automático da Vercel. Seu proprietário, criação, prontidão, ID e vínculo exclusivo ao projeto foram então confirmados por metadados. A revisão automática rejeitou uma proposta que aceitaria qualquer domínio Turso; essa proposta não foi enviada ao GitHub e foi revertida localmente. A alternativa mantém uma lista restrita ao nome/ID do recurso específico aprovado.
+
+A primeira publicação saudável no backend revelou uma regressão visual no Next.js nativo: o CSS compilado colocou o tema antes da base, que sobrescreveu tokens, fontes e fundo do banner. Isso foi observado no navegador (fundo creme com texto creme) e corrigido com uma única entrada CSS que importa base e tema na ordem explícita. A verificação final deve confirmar vinho no banner e Nunito/Inter; a captura inicial incorreta não é evidência de aceite visual.
 
 ## Reproduzir
 
