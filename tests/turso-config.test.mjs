@@ -3,6 +3,11 @@ import test from 'node:test';
 import {spawnSync} from 'node:child_process';
 import {isApprovedKikaHost} from '../scripts/db/turso-target.mjs';
 
+test('preview build refuses initialization before connecting to a shared production destination',()=>{
+ const result=spawnSync(process.execPath,['scripts/db/ensure-turso.mjs','--initialize-pdv'],{cwd:process.cwd(),encoding:'utf8',env:{...process.env,VERCEL_ENV:'preview',TURSO_DATABASE_URL:'libsql://database-bisque-cushion-test.turso.io',TURSO_AUTH_TOKEN:'synthetic-only'}});
+ assert.equal(result.status,1);assert.match(result.stderr,/stage=production_initialization_only;/);assert.equal(result.stdout,'');assert.ok(!result.stderr.includes('synthetic-only'));
+});
+
 test('approved destination is limited to the verified Kika resource name or ID', () => {
   for (const stem of ['database-bisque-cushion', '01a18a7d-cd01-7479-b1a8-b1d3b8e180ca']) {
     assert.equal(isApprovedKikaHost(`${stem}-test.turso.io`), true);

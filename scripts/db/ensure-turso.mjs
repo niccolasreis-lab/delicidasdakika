@@ -1,6 +1,7 @@
 import {createClient} from '@libsql/client/web';
 import {ensureKikaSchema} from './kika-schema.mjs';
 import {isApprovedKikaHost} from './turso-target.mjs';
+import {ensurePdvSchema} from './pdv-schema.mjs';
 import {ensureAdminSchema} from './admin-schema.mjs';
 
 // Only the new, explicitly approved Kika database may be initialized.
@@ -15,6 +16,8 @@ try {
   if (!['libsql:', 'https:'].includes(url.protocol)) throw new Error('insecure_protocol');
   stage = 'approved_kika_destination';
   if (!isApprovedKikaHost(url.hostname)) throw new Error('unapproved_destination');
+  stage='production_initialization_only';
+  if(process.env.VERCEL_ENV&&process.env.VERCEL_ENV!=='production'&&process.argv.some(a=>a.startsWith('--initialize-')))throw new Error('initialization_not_allowed');
   stage = 'connection_and_schema';
   client = createClient({url: url.href, authToken: process.env.TURSO_AUTH_TOKEN});
   const result = await ensureKikaSchema(client, {
@@ -27,6 +30,7 @@ try {
     const admin=await ensureAdminSchema(client,{initialize:true,passwordHash:process.env.KIKA_ADMIN_PASSWORD_HASH});
     console.log(`Kika admin schema verified: ${admin.tables} tables.`);
   }
+  if(process.argv.includes('--initialize-pdv')){stage='pdv_schema';const pdv=await ensurePdvSchema(client,{initialize:true});console.log(`Kika PDV schema verified: ${pdv.tables} tables.`);}
 } catch (error) {
   // Only fixed stages and documented provider codes may enter build logs.
   const safeCodes = ['UNAUTHORIZED', 'AUTH_FAILED', 'SERVER_ERROR', 'SQLITE_ERROR', 'SQLITE_BUSY', 'URL_INVALID', 'FETCH_FAILED'];
