@@ -5,6 +5,10 @@ import {quoteWithCatalog,zones as legacyZones} from '../../../lib/menu';
 import {readCatalog} from '../../../lib/catalog-store';
 import {assertOrderAvailable} from '../../../lib/catalog-model';
 import {sameOrderIntent,intentHash} from '../../../lib/order-intent';
+import {saleInput,createSale} from '../../../lib/sales';
+import {saleAction} from '../../../lib/pdv-engine.mjs';
+import {sameOrigin} from '../../../lib/auth';
+import {PdvError} from '../../../lib/pdv-engine.mjs';
 export async function POST(req:Request){
  try{
   const raw=await req.text();if(raw.length>20000)return Response.json({error:'Pedido muito grande.'},{status:413});
@@ -16,14 +20,18 @@ export async function POST(req:Request){
    if(saved.token!==b.token||!sameOrderIntent(saved,intent)||(!saved.requestHash.startsWith('intent-v1:')&&saved.fulfillment==='entrega'&&legacyZones[b.zone]?.fee!==saved.fee)||(saved.requestHash.startsWith('intent-v1:')&&saved.requestHash!==await intentHash(JSON.parse(saved.items),intent)))return Response.json({error:'Este identificador pertence a outro pedido.'},{status:409});
    return Response.json({id:saved.id,total:saved.total,status:saved.status,payment:saved.payment});
   };
-  const [existing]=await db.select().from(orders).where(eq(orders.id,b.id));if(existing)return response(existing);
+  const [existing]=await db.select().from(orders).where(eq(orders.id,b.id));
+  if(existing?.requestHash.startsWith('sale-v1:'))return Response.json(await createSale(saleInput.parse({...b,customer,phone,address,paid:false,source:'site'})));
+  if(existing)return response(existing);
   const {catalog}=await readCatalog();
+  if(!catalog.store.demo)return Response.json(await createSale(saleInput.parse({...b,customer,phone,address,paid:false,source:'site'})));
   const q=quoteWithCatalog(b.items,b.fulfillment,b.zone,catalog);
   assertOrderAvailable(catalog,b.items,b.fulfillment);
   if(b.expectedTotal!==undefined&&b.expectedTotal!==q.total)return Response.json({error:'O cardápio foi atualizado. Revise o valor antes de confirmar.',code:'PRICE_CHANGED'},{status:409});
   const hash=await intentHash(q.items,intent);
   await db.insert(orders).values({id:b.id,token:b.token,requestHash:hash,customer,phone,address,fulfillment:b.fulfillment,items:JSON.stringify(q.items),total:q.total,fee:q.fee,status:'recebido',payment:'não cobrado',createdAt:new Date().toISOString()}).onConflictDoNothing();
   const [saved]=await db.select().from(orders).where(eq(orders.id,b.id));return response(saved);
- }catch(e){return Response.json({error:e instanceof Error?e.message:'Falha no pedido.'},{status:400})}
+ }catch(e){if(e instanceof PdvError&&e.message==='O preço mudou. Revise o total antes de confirmar.')return Response.json({error:e.message,code:'PRICE_CHANGED'},{status:409});return Response.json({error:e instanceof Error?e.message:'Falha no pedido.'},{status:400})}
 }
-export async function GET(req:Request){const u=new URL(req.url);const [order]=await getDb().select().from(orders).where(and(eq(orders.id,u.searchParams.get('id')||''),eq(orders.token,req.headers.get('x-order-token')||'')));if(!order)return Response.json({error:'Pedido não encontrado.'},{status:404});return Response.json({...order,token:undefined,requestHash:undefined})}
+export async function GET(req:Request){const u=new URL(req.url);const [order]=await getDb().select().from(orders).where(and(eq(orders.id,u.searchParams.get('id')||''),eq(orders.token,req.headers.get('x-order-token')||'')));if(!order)return Response.json({error:'Pedido não encontrado.'},{status:404});let sale;if(order.requestHash.startsWith('sale-v1:'))sale=(await getDb().$client.execute({sql:'SELECT date,slot,method,payment_state,revision FROM kika_sale WHERE order_id=?',args:[order.id]})).rows[0];return Response.json({...order,token:undefined,requestHash:undefined,sale},{headers:{'cache-control':'no-store'}})}
+export async function PATCH(r:Request){if(!sameOrigin(r))return Response.json({error:'Origem inválida.'},{status:403});try{const raw=await r.text();if(raw.length>2000)throw Error('Requisição inválida.');const b=JSON.parse(raw);if(typeof b.id!=='string'||!Number.isInteger(b.version)||b.version<0)throw Error('Pedido inválido.');return Response.json(await saleAction(getDb().$client,{id:b.id,version:b.version,action:'cancel',token:r.headers.get('x-order-token')??'',owner:false}));}catch(e){return Response.json({error:e instanceof Error?e.message:'Não foi possível cancelar.'},{status:409})}}

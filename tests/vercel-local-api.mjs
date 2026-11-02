@@ -1,3 +1,4 @@
+import {ensurePdvSchema} from '../scripts/db/pdv-schema.mjs';
 import {hashPassword} from 'better-auth/crypto';
 import {ensureAdminSchema} from '../scripts/db/admin-schema.mjs';
 import sharp from 'sharp';
@@ -19,6 +20,7 @@ test('Next.js production server + libSQL: local order and admin flows', async t 
   const client = createClient({url});
   await client.execute(await readFile(new URL('../drizzle/0000_normal_boom_boom.sql', import.meta.url), 'utf8'));
   await ensureAdminSchema(client,{initialize:true,passwordHash:await hashPassword('local-test-password-123')});
+  await ensurePdvSchema(client,{initialize:true});
   client.close();
   const socket = createServer();
   await new Promise(resolve => socket.listen(0, '127.0.0.1', resolve));
@@ -152,6 +154,77 @@ test('Next.js production server + libSQL: local order and admin flows', async t 
       const bytes=await sharp({create:{width:10,height:10,channels:3,background:'#f72569'}}).png().toBuffer();
       const r=await fetch(`${base}/api/admin/media`,{method:'POST',headers:{cookie,origin:base,'content-type':'image/png'},body:bytes});assert.equal(r.status,200);const image=await r.json();assert.match(image.image,/^\/api\/media\/[a-f0-9-]{36}$/);
       const read=await fetch(base+image.image);assert.equal(read.status,200);assert.equal(read.headers.get('content-type'),'image/webp');assert.ok((await read.arrayBuffer()).byteLength>0);
+    });
+    const pdvHeaders=()=>({cookie,origin:base,'content-type':'application/json'});
+    const stockWrite=(body,headers=pdvHeaders())=>fetch(`${base}/api/admin/stock`,{method:'PUT',headers,body:JSON.stringify(body)});
+    const pdvPost=body=>fetch(`${base}/api/admin/pdv`,{method:'POST',headers:pdvHeaders(),body:JSON.stringify(body)});
+    const pdvPatch=body=>fetch(`${base}/api/admin/pdv`,{method:'PATCH',headers:pdvHeaders(),body:JSON.stringify(body)});
+    const saleBody=(patch={})=>({id:randomUUID(),token:randomUUID(),customer:'Cliente sintético PDV',phone:'11999999999',address:'',fulfillment:'retirada',zone:0,items:[{id:'frango',qty:1,size:'P',side:'Legumes',extras:[],note:''}],slot:'',method:'dinheiro',paid:false,source:'balcao',expectedTotal:2890,...patch});
+    let stockDay,paidSale,publicSale;
+    const saleLookup=async body=>{const r=await fetch(`${base}/api/orders?id=${body.id}`,{headers:{'x-order-token':body.token}});assert.equal(r.status,200);return r.json()};
+    await t.test('PDV and stock routes require owner session and origin',async()=>{
+      for(const path of ['/api/admin/stock','/api/admin/pdv'])assert.equal((await fetch(base+path,{method:path.endsWith('stock')?'PUT':'POST',headers:{'content-type':'application/json'},body:'{}'})).status,401);
+      assert.equal((await stockWrite({}, {cookie,origin:'https://other.invalid','content-type':'application/json'})).status,403);
+      assert.equal((await fetch(`${base}/api/admin/pdv`,{method:'PATCH',headers:{cookie,origin:'https://other.invalid','content-type':'application/json'},body:'{}'})).status,403);
+    });
+    await t.test('owner sets dated size stock; stale edits are rejected',async()=>{
+      stockDay=(await (await fetch(`${base}/api/catalog`)).json()).status.date;
+      assert.equal((await stockWrite({date:stockDay,productId:'frango',size:'P',quantity:8,version:-1})).status,200);
+      assert.equal((await stockWrite({date:stockDay,productId:'frango',size:'P',quantity:100,version:-1})).status,409);
+      assert.equal((await stockWrite({date:'2026-02-30',productId:'frango',size:'P',quantity:1,version:-1})).status,409);
+      catalogBody.catalog.store.paused=false;catalogBody.catalog.store.demo=false;
+      const r=await saveCatalog(catalogBody);assert.equal(r.status,200);catalogBody=await r.json();
+    });
+    await t.test('counter sale uses real server price and permits optional counter phone',async()=>{
+      paidSale=saleBody({phone:'',paid:true});const r=await pdvPost(paidSale);assert.equal(r.status,200);assert.equal((await r.json()).payment,'recebido manualmente');
+      assert.equal((await pdvPost(paidSale)).status,200);
+      assert.equal((await pdvPost({...paidSale,items:[{...paidSale.items[0],qty:2}]})).status,409);
+      const data=await saleLookup(paidSale);assert.equal(data.sale.source,undefined);assert.equal(data.sale.payment_state,'paid_manual');
+    });
+    await t.test('public pay-on-receipt shares stock, cannot forge payment and rejects unconnected Pix',async()=>{
+      publicSale=saleBody({source:'site',paid:true});let r=await post(publicSale);assert.equal(r.status,200);assert.equal((await r.json()).payment,'pagar no recebimento');
+      assert.equal((await post(publicSale)).status,200);
+      assert.equal((await post(saleBody({method:'pix_online'}))).status,400);
+      assert.equal((await post(saleBody({method:'pix_manual'}))).status,400);
+      const pub=await (await fetch(`${base}/api/catalog`)).json();assert.equal(pub.inventory.frango.P,6);assert.equal(pub.inventory.frango.G,undefined);
+      assert.equal((await post(saleBody({items:[{...publicSale.items[0],size:'G'}],expectedTotal:3690}))).status,400);
+    });
+    await t.test('real checkout rejects a changed total with review code before consuming stock',async()=>{
+      const before=(await (await fetch(`${base}/api/catalog`)).json()).inventory.frango.P;
+      const r=await post(saleBody({expectedTotal:1}));assert.equal(r.status,409);assert.equal((await r.json()).code,'PRICE_CHANGED');
+      assert.equal((await (await fetch(`${base}/api/catalog`)).json()).inventory.frango.P,before);
+    });
+    await t.test('customer cancellation is protected, versioned and returns shared stock',async()=>{
+      const cancel=(token,version=0)=>fetch(`${base}/api/orders`,{method:'PATCH',headers:{origin:base,'content-type':'application/json','x-order-token':token},body:JSON.stringify({id:publicSale.id,version})});
+      assert.equal((await cancel('wrong')).status,409);assert.equal((await cancel(publicSale.token)).status,200);assert.equal((await cancel(publicSale.token)).status,409);
+      assert.equal((await saleLookup(publicSale)).status,'cancelado');assert.equal((await (await fetch(`${base}/api/catalog`)).json()).inventory.frango.P,7);
+    });
+    await t.test('paid cancellation keeps refund pending until owner attests it happened',async()=>{
+      assert.equal((await pdvPatch({id:paidSale.id,version:0,action:'cancel'})).status,200);
+      assert.equal((await saleLookup(paidSale)).sale.payment_state,'refund_pending');
+      assert.equal((await pdvPatch({id:paidSale.id,version:1,action:'refund'})).status,200);
+      assert.equal((await saleLookup(paidSale)).sale.payment_state,'refunded_manual');
+    });
+    await t.test('no-show keeps or restores stock only as chosen and forbids later receipt',async()=>{
+      const body=saleBody();assert.equal((await pdvPost(body)).status,200);
+      assert.equal((await pdvPatch({id:body.id,version:0,action:'no_show',returnStock:false})).status,200);
+      assert.equal((await pdvPatch({id:body.id,version:1,action:'receive'})).status,409);
+      assert.equal((await saleLookup(body)).status,'não compareceu');
+    });
+    await t.test('preparation prevents customer cancel and old admin API cannot bypass PDV rules',async()=>{
+      const body=saleBody();assert.equal((await pdvPost(body)).status,200);
+      assert.equal((await pdvPatch({id:body.id,version:0,action:'status',status:'em preparo'})).status,200);
+      assert.equal((await fetch(`${base}/api/orders`,{method:'PATCH',headers:{origin:base,'content-type':'application/json','x-order-token':body.token},body:JSON.stringify({id:body.id,version:1})})).status,409);
+      assert.equal((await fetch(`${base}/api/admin`,{method:'PATCH',headers:pdvHeaders(),body:JSON.stringify({id:body.id,status:'cancelado'})})).status,409);
+      assert.equal((await fetch(`${base}/api/admin`,{headers:{cookie}})).status,200);
+    });
+    await t.test('configured slot is required and tampered slots do not consume stock',async()=>{
+      catalogBody.catalog.store.exceptions[stockDay].slots=[{start:'00:00',end:'23:59',delivery:false,pickup:true}];
+      let r=await saveCatalog(catalogBody);assert.equal(r.status,200);catalogBody=await r.json();
+      assert.equal((await post(saleBody())).status,400);
+      assert.equal((await pdvPost(saleBody({slot:'01:00-02:00'}))).status,409);
+      const body=saleBody({slot:'00:00-23:59'});assert.equal((await post(body)).status,200);assert.equal((await saleLookup(body)).sale.slot,'00:00-23:59');
+      assert.equal((await stockWrite({date:stockDay,productId:'frango',size:'P',quantity:100,version:0})).status,409);
     });
     await t.test('password change revokes old password and logout removes access',async()=>{
       const r=await fetch(`${base}/api/auth/change-password`,{method:'POST',headers:{cookie,origin:base,'content-type':'application/json'},body:JSON.stringify({currentPassword:'local-test-password-123',newPassword:'local-changed-password-456',revokeOtherSessions:true})});assert.equal(r.status,200);
