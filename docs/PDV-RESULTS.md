@@ -2,7 +2,7 @@
 
 Data: 2 de novembro de 2026. Branch: `feat/kika-pdv-stock`.
 
-Estado: código implementado e validado localmente. Atualização ainda não publicada. Nenhuma migração, venda, ajuste de estoque ou cobrança foi executada em produção nesta etapa.
+Estado: publicada na Vercel em 2 de novembro de 2026, após autorização explícita para a migração aditiva. Commit publicado: `425df24a01686c4b2a826392f2a3b67a10307d71`. O preflight executou e validou as três tabelas novas. Nenhuma venda, ajuste de estoque, alteração do catálogo ou cobrança foi executada como teste em produção.
 
 ## Alterações e componentes
 
@@ -68,13 +68,28 @@ Os commits remotos contêm árvores idênticas às versões locais testadas. Nã
 
 ## Publicação segura e rollback
 
-1. Aprovar a criação das três tabelas novas antes do próximo deploy de produção. O build foi preparado com `--initialize-pdv`; executar esta flag no banco publicado é a etapa que ainda depende dessa aprovação.
-2. Fazer a publicação mantendo o catálogo em demonstração. A migração não muda preços, quantidade disponível, horários ou modo da loja.
+1. Concluído: criação aditiva das três tabelas autorizada pelo responsável e executada no deploy com `--initialize-pdv`. O schema original de treze colunas e as sete tabelas administrativas foram validados.
+2. Concluído: deploy de produção READY. O catálogo público retornou dez produtos e permaneceu em demonstração. A migração não muda preços, quantidade disponível, horários ou modo da loja.
 3. Validar login e interface nos dispositivos. Conferir os produtos, fotos reais, preços, endereço, taxas, agenda e disponibilidade com a Kika.
 4. Liberar operação comercial pelo painel somente após essa conferência. Pix automático permanece bloqueado até a validação da integração externa.
 
 Preview Vercel não pode inicializar o banco de produção compartilhado: o preflight bloqueia a conexão antes de qualquer inicialização quando o ambiente não é Production. Para preview funcional, preparar um banco isolado por procedimento revisado.
 
-Antes da publicação desta branch, basta manter o deploy administrativo atual; não há dados de produção a reverter nesta etapa. Depois de vendas com estoque, pausar novos pedidos e preservar todas as tabelas. Evitar reabrir o código anterior, que não conhece o estoque nem os novos estados. Preferir correção compatível; nunca apagar tabelas como rollback.
+O rollback deve preservar as tabelas criadas. Antes de vendas com estoque, o deploy administrativo anterior pode ser reativado mantendo a demonstração. Depois de vendas com estoque, pausar novos pedidos e preservar todas as tabelas. Evitar reabrir o código anterior, que não conhece o estoque nem os novos estados. Preferir correção compatível; nunca apagar tabelas como rollback.
 
 Para reproduzir: `pnpm run test:regression`, `pnpm run build:vercel`, `pnpm run test:api`, `node node_modules/typescript/bin/tsc --noEmit`. Nunca executar os testes de API contra a produção.
+
+
+## Verificação após publicação
+
+- Deploy Vercel: READY, build de produção concluído; compilação e TypeScript aprovados.
+- Preflight: schema original com treze colunas validado, sem inicializar novamente a tabela; sete tabelas administrativas e três tabelas do PDV validadas.
+- HTTP GET `/`, `/admin` e `/api/catalog`: 200.
+- Catálogo: dez produtos, demonstração preservada e campo de disponibilidade presente.
+- HTTP GET `/api/admin/stock` sem sessão: 401.
+- HTTP POST e PATCH `/api/admin/pdv` sem sessão: 401. Nenhum pedido foi criado por essas verificações.
+- Tela de login abriu no navegador. O console observado não apresentou erro da aplicação; os únicos registros de erro eram de uma extensão do navegador.
+- Consulta de logs de runtime do novo deployment, filtrada por error/fatal na janela de dez minutos: nenhum grupo de erro retornado. Esta verificação pontual não substitui monitoramento contínuo; drains e cobertura de monitoramento não foram auditados.
+- Sessão autenticada e interface interna do novo PDV em produção continuam pendentes de validação no navegador. Login e ações internas já foram testados no servidor de produção local com conta e banco sintéticos. Android/iOS reais e teclado virtual continuam pendentes.
+
+Endereço de acesso: https://delicias-da-kika.vercel.app/admin . Não publicar senhas nem tokens junto ao relatório.
